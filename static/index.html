@@ -23,6 +23,22 @@
   --danger:        #e05c5c;
   --success:       #5cb85c;
 }
+[data-theme="light"] {
+  --bg-primary:    #ffffff;
+  --bg-secondary:  #f8f9fa;
+  --bg-tertiary:   #e9ecef;
+  --bg-hover:      #dee2e6;
+  --accent:        #d4a574;
+  --accent2:       #c9956a;
+  --text-primary:  #212529;
+  --text-secondary:#495057;
+  --text-muted:    #6c757d;
+  --border:        #dee2e6;
+  --user-msg:      #e3f2fd;
+  --ai-msg:        #f1f3f5;
+  --danger:        #dc3545;
+  --success:       #28a745;
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden}
 
@@ -146,6 +162,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--t
   border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .2s
 }
 .model-select:focus,.model-select:hover{border-color:var(--accent);outline:none}
+.theme-btn{
+  width:36px;height:36px;background:var(--bg-tertiary);border:1px solid var(--border);
+  border-radius:8px;color:var(--text-secondary);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative
+}
+.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
+.theme-dropdown{
+  position:absolute;top:calc(100% + 6px);right:0;background:var(--bg-secondary);border:1px solid var(--border);
+  border-radius:9px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:1000;min-width:130px;overflow:hidden;display:none
+}
+.theme-dropdown.open{display:block;animation:fadeUp .15s ease}
+.theme-option{
+  display:flex;align-items:center;gap:8px;width:100%;padding:10px 14px;
+  background:none;border:none;font-size:13px;color:var(--text-primary);
+  cursor:pointer;transition:background .15s;text-align:left
+}
+.theme-option:hover{background:var(--bg-hover)}
+.theme-option.active{color:var(--accent);font-weight:600}
+.theme-option svg{width:15px;height:15px;flex-shrink:0}
 .settings-btn{
   width:36px;height:36px;background:var(--bg-tertiary);border:1px solid var(--border);
   border-radius:8px;color:var(--text-secondary);font-size:17px;cursor:pointer;
@@ -347,6 +382,25 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--t
     <div class="chat-header">
       <h2>对话</h2>
       <div class="header-right">
+        <button class="theme-btn" id="themeBtn" title="切换主题">
+          <svg id="themeIconDark" viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+          <svg id="themeIconLight" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:none"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg id="themeIconSystem" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:none"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+        </button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <button class="theme-option" data-theme="dark">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+            暗色
+          </button>
+          <button class="theme-option" data-theme="light">
+            <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            亮色
+          </button>
+          <button class="theme-option" data-theme="system">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+            跟随系统
+          </button>
+        </div>
         <select class="model-select" id="modelSelect" onchange="onModelChange()"></select>
         <button class="settings-btn" onclick="openSettings()" title="设置">⚙</button>
       </div>
@@ -535,6 +589,68 @@ function logout() {
   document.getElementById('authUser').value = '';
   document.getElementById('authPass').value = '';
 }
+
+// ══════════════════════════════════════════════════════════════════════════
+//  THEME
+// ══════════════════════════════════════════════════════════════════════════
+const THEME_KEY = 'ai_studio_theme';
+
+function getPreferredTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return 'dark';
+}
+
+function applyTheme(theme) {
+  if (theme === 'system') {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
+  updateThemeIcon(theme);
+  document.querySelectorAll('.theme-option').forEach(opt => {
+    opt.classList.toggle('active', opt.dataset.theme === theme);
+  });
+}
+
+function updateThemeIcon(theme) {
+  const iconDark = document.getElementById('themeIconDark');
+  const iconLight = document.getElementById('themeIconLight');
+  const iconSystem = document.getElementById('themeIconSystem');
+  iconDark.style.display = theme === 'dark' ? 'block' : 'none';
+  iconLight.style.display = theme === 'light' ? 'block' : 'none';
+  iconSystem.style.display = theme === 'system' ? 'block' : 'none';
+}
+
+function initTheme() {
+  const theme = getPreferredTheme();
+  applyTheme(theme);
+  
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (localStorage.getItem(THEME_KEY) === 'system' || !localStorage.getItem(THEME_KEY)) {
+      applyTheme('system');
+    }
+  });
+}
+
+document.getElementById('themeBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  document.getElementById('themeDropdown').classList.toggle('open');
+});
+
+document.addEventListener('click', () => {
+  document.getElementById('themeDropdown').classList.remove('open');
+});
+
+document.querySelectorAll('.theme-option').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const theme = btn.dataset.theme;
+    localStorage.setItem(THEME_KEY, theme);
+    applyTheme(theme);
+    document.getElementById('themeDropdown').classList.remove('open');
+  });
+});
 
 // ══════════════════════════════════════════════════════════════════════════
 //  BOOT
@@ -1046,6 +1162,7 @@ function showToast(msg,type=''){
 //  INIT — auto-login if token exists
 // ══════════════════════════════════════════════════════════════════════════
 (async () => {
+  initTheme();
   if (token) {
     try {
       await GET('/api/auth/me');
