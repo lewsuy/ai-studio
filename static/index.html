@@ -1059,6 +1059,14 @@ function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.sc
 // ══════════════════════════════════════════════════════════════════════════
 function md(raw) {
   const blocks=[]; let s=raw.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const i=blocks.length;blocks.push(`<pre><code class="${l?'language-'+l:''}">${esc(c.replace(/\n$/,''))}</code></pre>`);return`\x00B${i}\x00`;});
+  
+  // 处理缩进代码块（4个空格或1个制表符）
+  s=s.replace(/^(?: {4}|\t)([\s\S]*?)(?:^$|(?=^[^ \t]))/gm, (_, c) => {
+    const i = blocks.length;
+    blocks.push(`<pre><code>${esc(c.replace(/\n$/,''))}</code></pre>`);
+    return `\x00B${i}\x00`;
+  });
+  
   const inlines=[]; s=s.replace(/`([^`]+)`/g,(_,c)=>{const i=inlines.length;inlines.push(`<code>${esc(c)}</code>`);return`\x00I${i}\x00`;});
   const lines=s.split('\n'); const out=[]; let i=0;
   while(i<lines.length){
