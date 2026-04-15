@@ -528,7 +528,7 @@ function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.sc
 function md(raw) {
   const blocks=[]; let s=raw.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const i=blocks.length;blocks.push(`<pre><code class="${l?'language-'+l:''}">${esc(c.replace(/\n$/,''))}</code></pre>`);return`\x00B${i}\x00`;});
 
-  s=s.replace(/^(?: {4}|\t|)(#!/bin/bash[\s\S]*?)(?:^$|(?=^\s*$))/gm, (_, c) => {
+  s=s.replace(/^(?: {4}|\t|)#!\/bin\/bash[\s\S]*?(?:^$|(?=^\s*$))/gm, (_, c) => {
     const i = blocks.length;
     blocks.push(`<pre><code class="language-bash">${esc(c.replace(/\n$/,''))}</code></pre>`);
     return `\x00B${i}\x00`;
