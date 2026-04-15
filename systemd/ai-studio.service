@@ -1,0 +1,25 @@
+[Unit]
+Description=AI Studio Web Application
+After=network.target
+
+[Service]
+Type=simple
+User=ai-studio
+Group=ai-studio
+WorkingDirectory=/opt/ai-studio
+EnvironmentFile=/opt/ai-studio/.env
+ExecStart=/opt/ai-studio/venv/bin/gunicorn \
+    --workers 4 \
+    --bind 0.0.0.0:8000 \
+    --timeout 120 \
+    --access-logfile /opt/ai-studio/logs/access.log \
+    --error-logfile  /opt/ai-studio/logs/error.log \
+    --log-level info \
+    app:app
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
