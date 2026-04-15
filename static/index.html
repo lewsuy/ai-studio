@@ -644,20 +644,24 @@ document.getElementById('themeBtn').addEventListener('click', (e) => {
   const dropdown = document.getElementById('themeDropdown');
   dropdown.classList.toggle('open');
   console.log('[Theme] Dropdown open:', dropdown.classList.contains('open'));
+  console.log('[Theme] Options count:', document.querySelectorAll('.theme-option').length);
 });
 
-document.addEventListener('click', () => {
-  document.getElementById('themeDropdown').classList.remove('open');
-});
-
-document.querySelectorAll('.theme-option').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const theme = btn.dataset.theme;
-    console.log('[Theme] Option clicked:', theme);
+// Event delegation for theme options
+document.addEventListener('click', (e) => {
+  const option = e.target.closest('.theme-option');
+  if (option) {
+    const theme = option.dataset.theme;
+    console.log('[Theme] Option clicked via delegation:', theme);
     localStorage.setItem(THEME_KEY, theme);
     applyTheme(theme);
     document.getElementById('themeDropdown').classList.remove('open');
-  });
+  }
+  
+  // Close dropdown when clicking outside
+  if (!e.target.closest('.theme-btn')) {
+    document.getElementById('themeDropdown').classList.remove('open');
+  }
 });
 
 // ══════════════════════════════════════════════════════════════════════════
