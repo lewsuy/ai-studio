@@ -39,6 +39,42 @@
   --danger:        #dc3545;
   --success:       #28a745;
 }
+@media (prefers-color-scheme: dark) {
+  [data-theme="system"] {
+    --bg-primary:    #0a0a0f;
+    --bg-secondary:  #13131a;
+    --bg-tertiary:   #1a1a24;
+    --bg-hover:      #21212e;
+    --accent:        #e6b17e;
+    --accent2:       #d4a574;
+    --text-primary:  #e8e8ed;
+    --text-secondary:#a0a0b0;
+    --text-muted:    #6e6e7e;
+    --border:        #2a2a38;
+    --user-msg:      #2d3748;
+    --ai-msg:        #1e2533;
+    --danger:        #e05c5c;
+    --success:       #5cb85c;
+  }
+}
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    --bg-primary:    #ffffff;
+    --bg-secondary:  #f8f9fa;
+    --bg-tertiary:   #e9ecef;
+    --bg-hover:      #dee2e6;
+    --accent:        #d4a574;
+    --accent2:       #c9956a;
+    --text-primary:  #212529;
+    --text-secondary:#495057;
+    --text-muted:    #6c757d;
+    --border:        #dee2e6;
+    --user-msg:      #e3f2fd;
+    --ai-msg:        #f1f3f5;
+    --danger:        #dc3545;
+    --success:       #28a745;
+  }
+}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--text-primary);height:100vh;overflow:hidden}
 
@@ -576,8 +612,7 @@ function getPreferredTheme() {
 
 function applyTheme(theme) {
   if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', 'system');
   } else {
     document.documentElement.setAttribute('data-theme', theme);
   }
@@ -596,12 +631,6 @@ function updateThemeIcon(theme) {
 function initTheme() {
   const theme = getPreferredTheme();
   applyTheme(theme);
-
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (!localStorage.getItem(THEME_KEY) || localStorage.getItem(THEME_KEY) === 'system') {
-      applyTheme('system');
-    }
-  });
 }
 
 const THEMES = ['dark', 'light', 'system'];
