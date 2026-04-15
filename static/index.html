@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI Studio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap');
 
@@ -187,7 +189,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg-primary);color:var(--t
 .user-message .msg-body{background:var(--user-msg);border-left:3px solid #667eea}
 .ai-message .msg-body{background:var(--ai-msg);border-left:3px solid var(--accent)}
 .msg-body pre{background:var(--bg-primary);padding:12px;border-radius:6px;overflow-x:auto;margin:8px 0}
-.msg-body code{font-family:'Courier New',monospace;font-size:13px}
+.msg-body pre code{font-family:'Courier New',monospace;font-size:13px;background:none;padding:0}
+.msg-body code{font-family:'Courier New',monospace;font-size:13px;background:var(--bg-tertiary);padding:2px 5px;border-radius:3px}
 .msg-body h1{font-family:'Crimson Pro',serif;font-size:22px;font-weight:600;color:var(--accent);margin:16px 0 8px}
 .msg-body h2{font-family:'Crimson Pro',serif;font-size:18px;font-weight:600;color:var(--accent);margin:14px 0 6px}
 .msg-body h3{font-size:15px;font-weight:700;margin:12px 0 5px}
@@ -797,6 +800,7 @@ function renderMessages() {
     </div>`;
   }).join('');
   el.scrollTop = el.scrollHeight;
+  hljs.highlightAll();
 }
 
 function renderAttachHtml(attachments) {
@@ -1054,7 +1058,7 @@ function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.sc
 //  MARKDOWN RENDERER
 // ══════════════════════════════════════════════════════════════════════════
 function md(raw) {
-  const blocks=[]; let s=raw.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const i=blocks.length;blocks.push(`<pre><code class="lang-${l}">${esc(c.replace(/\n$/,''))}</code></pre>`);return`\x00B${i}\x00`;});
+  const blocks=[]; let s=raw.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const i=blocks.length;blocks.push(`<pre><code class="${l?'language-'+l:''}">${esc(c.replace(/\n$/,''))}</code></pre>`);return`\x00B${i}\x00`;});
   const inlines=[]; s=s.replace(/`([^`]+)`/g,(_,c)=>{const i=inlines.length;inlines.push(`<code>${esc(c)}</code>`);return`\x00I${i}\x00`;});
   const lines=s.split('\n'); const out=[]; let i=0;
   while(i<lines.length){
@@ -1077,6 +1081,15 @@ function md(raw) {
   blocks.forEach((b,i)=>html=html.replace(`\x00B${i}\x00`,b));
   inlines.forEach((b,i)=>html=html.replace(`\x00I${i}\x00`,b));
   return html;
+}
+
+function renderWithHighlight(html) {
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  temp.querySelectorAll('pre code').forEach(block => {
+    hljs.highlightElement(block);
+  });
+  return temp.innerHTML;
 }
 function inl(t){
   t=t.replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>');
