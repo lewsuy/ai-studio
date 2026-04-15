@@ -394,7 +394,7 @@ function renderModelList() {
     if (editingModelIndex === i) {
       return `<div class="model-item"><div class="model-edit-row"><input type="text" id="editMName" value="${esc(m.name)}" placeholder="模型名称"><input type="text" id="editMId" value="${esc(m.id)}" placeholder="模型 ID"></div><button class="model-edit-btn" onclick="saveEditModel(${i})" title="保存">✓</button><button class="model-del-btn" onclick="cancelEditModel()" title="取消">✕</button></div>`;
     }
-    return `<div class="model-item"><div class="model-item-info"><div class="model-item-name">${esc(m.name)}</div><div class="model-item-id">${esc(m.id)}</div></div><button class="model-edit-btn" onclick="startEditModel(${i})" title="编辑">✎</button><button class="model-del-btn" onclick="delModel(${i})")">✕</button></div>`;
+    return `<div class="model-item"><div class="model-item-info"><div class="model-item-name">${esc(m.name)}</div><div class="model-item-id">${esc(m.id)}</div></div><button class="model-edit-btn" onclick="startEditModel(${i})" title="编辑">✎</button><button class="model-del-btn" onclick="delModel(${i})">✕</button></div>`;
   }).join('');
 }
 
@@ -527,19 +527,19 @@ function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.sc
 // ══════════════════════════════════════════════════════════════════════════
 function md(raw) {
   const blocks=[]; let s=raw.replace(/```(\w*)\n?([\s\S]*?)```/g,(_,l,c)=>{const i=blocks.length;blocks.push(`<pre><code class="${l?'language-'+l:''}">${esc(c.replace(/\n$/,''))}</code></pre>`);return`\x00B${i}\x00`;});
-  
+
   s=s.replace(/^(?: {4}|\t|)(#!/bin/bash[\s\S]*?)(?:^$|(?=^\s*$))/gm, (_, c) => {
     const i = blocks.length;
     blocks.push(`<pre><code class="language-bash">${esc(c.replace(/\n$/,''))}</code></pre>`);
     return `\x00B${i}\x00`;
   });
-  
+
   s=s.replace(/^(?: {4}|\t)([\s\S]*?)(?:^$|(?=^[^ \t]))/gm, (_, c) => {
     const i = blocks.length;
     blocks.push(`<pre><code>${esc(c.replace(/\n$/,''))}</code></pre>`);
     return `\x00B${i}\x00`;
   });
-  
+
   const inlines=[]; s=s.replace(/`([^`]+)`/g,(_,c)=>{const i=inlines.length;inlines.push(`<code>${esc(c)}</code>`);return`\x00I${i}\x00`;});
   const lines=s.split('\n'); const out=[]; let i=0;
   while(i<lines.length){
